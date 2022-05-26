@@ -5,15 +5,6 @@ const contactsPath = path.join(__dirname, "./contacts.json")
 
 
 
-// async function getListContact() {
-//   try {
-//     const data = await fs.readFile(contactsPath, "utf8");
-//     return JSON.parse(data);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
 const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath, "utf8");
@@ -23,7 +14,6 @@ const listContacts = async () => {
   }
 }
 
-// console.log(listContacts());
 
 
 const getContactById = async (contactId) => {
@@ -32,11 +22,8 @@ const getContactById = async (contactId) => {
     const neededContact = await contacts.filter((contact) => {
       return contact.id === contactId;
     });
-    // return neededContact ? neededContact : 'op';
-    if(neededContact){
-      return neededContact
-    }
-return null
+    return neededContact !== undefined ? neededContact : null;
+
   } catch (error) {
     console.log(error);
   }
@@ -54,7 +41,6 @@ const addContact = async ({name, email, phone}) => {
   try {
     const contacts = await listContacts();
     const updatedContacts = [...contacts, newContact];
-    // const updatedContacts = contacts.push(newContact);
     await fs.writeFile(contactsPath, JSON.stringify(updatedContacts));
 
   } catch (error) {
