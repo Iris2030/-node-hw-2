@@ -2,13 +2,12 @@ const uniqid = require("uniqid");
 const path = require("path");
 const fs = require("fs").promises;
 const contactsPath = path.join(__dirname, "./contacts.json")
-
-
+const Contact = require('./contact')
 
 const listContacts = async () => {
   try {
-    const data = await fs.readFile(contactsPath, "utf8");
-    return JSON.parse(data);
+    const contacts = await Contact.find();
+    return contacts;
   } catch (error) {
     console.log(error);
   }
@@ -18,11 +17,8 @@ const listContacts = async () => {
 
 const getContactById = async (contactId) => {
   try {
-    const contacts = await listContacts();
-    const neededContact = await contacts.filter((contact) => {
-      return contact.id === contactId;
-    });
-    return neededContact !== undefined ? neededContact : null;
+    const contact = await Contact.findById(contactId);
+    return contact;
 
   } catch (error) {
     console.log(error);
@@ -91,5 +87,3 @@ module.exports = {
   addContact,
   updateContact,
 }
-
- 

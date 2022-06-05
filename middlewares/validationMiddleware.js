@@ -1,8 +1,7 @@
-
 const Joi = require("joi");
 
-module.exports={
-    validation: (req, res, next) => {
+
+const createValidation = (req, res, next) => {
         const schema = Joi.object({
             name: Joi.string()
               .min(3)
@@ -10,18 +9,31 @@ module.exports={
               .required(),
             email: Joi.string().email({
               minDomainSegments: 2,
-              tlds: { allow: true },
-            }),
+              tlds: { allow: true }
+            }).required(),
             phone: Joi.string()
               .max(15)
               .pattern( /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/)
               .required(),
+              favorite: Joi.bool(),
           });
-          const validationResult = schema.validate(req.body);
-          if (validationResult.error) {
-            return res.status(400).json({ status: validationResult.error.details });
+          const {error} = schema.validate(req.body);
+          if (error) {
+            return res.status(400).json({ status: error.details });
           }
           next();
     }
 
-}
+    const patchValidation = (req, res, next) => {
+      const schema = Joi.object({
+            favorite: Joi.bool()
+            .required(),
+        });
+        const {error} = schema.validate(req.body);
+        if (error) {
+          return res.status(400).json({ status: error.details });
+        }
+        next();
+  }
+
+  module.exports = {createValidation, patchValidation}
