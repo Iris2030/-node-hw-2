@@ -1,8 +1,11 @@
 const Contact = require("../models/contact");
 
-const listContacts = async () => {
+const listContacts = async (query, id) => {
+const {page,limit} = query
+const skipped = (page -1)* limit
+const skip = skipped < 0 ? 0 : skipped
   try {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({owner:id},{},{skip,limit});
     return contacts;
   } catch (error) {
     console.log(error);
@@ -18,9 +21,9 @@ const getContactById = async (contactId) => {
   }
 };
 
-const addContact = async (contact) => {
+const addContact = async (contact, id) => {
   try {
-    return Contact.create(contact);
+    return Contact.create({...contact, owner : id});
   } catch (error) {
     console.log(error);
   }
