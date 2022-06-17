@@ -36,4 +36,54 @@ const createValidation = (req, res, next) => {
         next();
   }
 
-  module.exports = {createValidation, patchValidation}
+  const userValidation = (req, res, next) => {
+    const schema = Joi.object({
+    email: Joi.string().email({
+      minDomainSegments: 2,
+      tlds: { allow: true }
+    }).required(),
+    password: Joi.string()
+    .min(8)
+      .max(15)
+      .required(),
+      subscription: Joi.string(),
+      });
+      const {error} = schema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ status: error.details });
+      }
+      next();
+}
+
+const loginValidation = (req, res, next) => {
+  const schema = Joi.object({
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: true }
+  }).required(),
+  password: Joi.string()
+  .min(8)
+    .max(15)
+    .required(),
+    subscription: Joi.string()
+    });
+    const {error} = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ status: error.details });
+    }
+    next();
+}
+
+const subscriptionValidation = (req, res, next) => {
+  const schema = Joi.object({
+        subscription: Joi.string()
+        .required(),
+    });
+    const {error} = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ status: error.details });
+    }
+    next();
+}
+
+  module.exports = {createValidation, patchValidation,userValidation,loginValidation,subscriptionValidation}
