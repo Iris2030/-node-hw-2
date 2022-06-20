@@ -7,9 +7,8 @@ const {
 } = require("../services/contactsService");
 
 const getAll = async (req, res, next) => {
-
   try {
-    const contacts = await listContacts(req.query,req.user._id);
+    const contacts = await listContacts(req.query, req.user._id);
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -32,8 +31,7 @@ const getById = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const body = req.body;
-    const {_id} = req.user
-
+    const { _id } = req.user;
 
     if (!body.name) {
       res.status(400).json({ message: "missing required name field" });
@@ -45,7 +43,7 @@ const create = async (req, res, next) => {
       res.status(400).json({ message: "missing required phone field" });
     }
 
-    const contact = await addContact(body,_id);
+    const contact = await addContact(body, _id);
     res.status(201).json(contact);
   } catch (error) {
     next(error);

@@ -1,11 +1,11 @@
 const Contact = require("../models/contact");
 
 const listContacts = async (query, id) => {
-const {page,limit} = query
-const skipped = (page -1)* limit
-const skip = skipped < 0 ? 0 : skipped
+  const { page, limit } = query;
+  const skipped = (page - 1) * limit;
+  const skip = skipped < 0 ? 0 : skipped;
   try {
-    const contacts = await Contact.find({owner:id},{},{skip,limit});
+    const contacts = await Contact.find({ owner: id }, {}, { skip, limit });
     return contacts;
   } catch (error) {
     console.log(error);
@@ -23,7 +23,7 @@ const getContactById = async (contactId) => {
 
 const addContact = async (contact, id) => {
   try {
-    return Contact.create({...contact, owner : id});
+    return Contact.create({ ...contact, owner: id });
   } catch (error) {
     console.log(error);
   }
@@ -32,7 +32,7 @@ const addContact = async (contact, id) => {
 const removeContact = async (contactId) => {
   try {
     const contactToDelete = await Contact.findByIdAndDelete(contactId);
-    return contactToDelete
+    return contactToDelete;
   } catch (error) {
     console.log(error);
   }
@@ -40,14 +40,14 @@ const removeContact = async (contactId) => {
 
 const updateContact = async (contactId, contact) => {
   try {
-    const updatedContact = await Contact.findByIdAndUpdate(contactId, contact, {new: true});
-    return updatedContact
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, contact, {
+      new: true,
+    });
+    return updatedContact;
   } catch (error) {
     console.log(error);
   }
 };
-
-
 
 module.exports = {
   listContacts,
@@ -55,5 +55,4 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
-
 };
