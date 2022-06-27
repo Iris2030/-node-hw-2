@@ -1,5 +1,5 @@
 const uploadImage = require("../services/imageService");
-const updateUser = require("../services/userService");
+const {updateUser} = require("../services/userService");
 
 const updateAvatar = async (req, res, next) => {
   try {

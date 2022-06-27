@@ -1,5 +1,6 @@
 const gravatar = require("gravatar");
 const { Schema, model } = require("mongoose");
+const { v4 } = require("uuid");
 
 const schema = new Schema(
   {
@@ -26,6 +27,17 @@ const schema = new Schema(
       default: function () {
         return gravatar.url(this.email, {}, true);
       },
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: function () {
+        return v4();
+      },
+      required: [true, "Verify token is required"],
     },
   },
   { timestamps: true }

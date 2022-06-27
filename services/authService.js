@@ -28,6 +28,9 @@ const loginUser = async ({ email, password }) => {
     throw createError(401, "Email or password is wrong");
   }
 
+  if(user && !user.verify){
+    throw createError(401, "Please confirm your email")
+  }
   const isValid = bcrypt.compareSync(password, user.password);
 
   if (!isValid) {

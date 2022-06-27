@@ -1,17 +1,19 @@
+const { createError } = require("../helpers/errors");
 const authService = require("../services/authService");
+const { sendEmail } = require("../services/emailService");
+const { findUserAndUpdate } = require("../services/userService");
+const User = require("../models/user");
 
 const register = async (req, res, next) => {
   try {
     const user = await authService.registUser(req.body);
 
+    await sendEmail(user.email, user.verificationToken);
     return res.status(201).json({
       code: 201,
       data: {
         email: user.email,
         subscription: user.subscription,
-        // role: user.role,
-        // id: user._id,
-        // avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
@@ -63,9 +65,54 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
+const confirm = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await findUserAndUpdate(
+      { verificationToken: verificationToken },
+      { verify: true, verificationToken: null }
+    );
+
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+
+    return res.status(200).json("Verification successful");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resendEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      throw createError(400, "missing required field email");
+    }
+    const user = await User.findOne({ email });
+    // const user = await findUser(email)
+    if (!user) {
+      throw createError(404, "User was not found");
+    }
+    
+    if(user.verify){
+      throw createError(400,"Verification has already been passed")
+    }
+
+    await sendEmail(user.email, user.verificationToken);
+
+    return res.status(200).json("Verification email sent");
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   updateSubscription,
+  confirm,
+  resendEmail,
 };
